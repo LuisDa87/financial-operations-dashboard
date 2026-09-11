@@ -1,155 +1,93 @@
-# Financial CRUD Management System
+# Financial Operations Dashboard
 
-## 📖 System Description
+A web application for managing invoices, payment transactions, customers, and financial platforms through a normalized PostgreSQL data model.
 
-This project is a full-stack web application designed to manage financial data sourced from Fintech platforms. It provides a clean, responsive, and efficient user interface for performing **CRUD (Create, Read, Update, Delete)** operations on a normalized PostgreSQL database.
+The project focuses on operational visibility, transaction tracking, reconciliation-oriented queries, bulk data ingestion, and API-driven CRUD workflows.
 
-The entire backend is powered by a **PostgREST** API, which is automatically generated from the database schema, and the entire infrastructure is containerized with **Docker** for consistent and scalable deployment. A **Traefik** reverse proxy handles secure connections (HTTPS) and routing.
+## Highlights
 
------
+- CRUD workflows for customers, platforms, and invoices.
+- Transaction views designed for operational analysis.
+- PostgreSQL schema normalized to Third Normal Form (3NF).
+- REST access through PostgREST.
+- Reconciliation-oriented database views and filters.
+- CSV import utility for repeatable data loading.
+- Responsive JavaScript dashboard.
+- Synthetic development dataset with no real customer information.
 
-## ✨ Key Features
+## Architecture
 
-  * **Full CRUD Functionality:** Complete create, read, update, and delete operations for Customers, Platforms, and Invoices.
-  * **Data Visualization:** Read-only views for complex data like financial Transactions.
-  * **Normalized Database:** A robust PostgreSQL database designed up to the Third Normal Form (3NF) to ensure data integrity and eliminate redundancy.
-  * **Auto-generated RESTful API:** A secure and high-performance API served by PostgREST, requiring no manual backend coding for CRUD endpoints.
-  * **Dockerized Environment:** The entire application stack (Database, API, Web Server) is containerized, ensuring easy setup and consistent behavior across different environments.
-  * **Advanced Query Endpoints:** Custom API endpoints for complex reporting, created using PostgreSQL Views.
+```mermaid
+flowchart TD
+    A[JavaScript Dashboard] --> B[PostgREST API]
+    B --> C[PostgreSQL]
+    D[CSV Import Utility] --> C
+```
 
------
+## Technology stack
 
-## 🛠️ Technologies Used
+| Area | Technologies |
+| --- | --- |
+| Frontend | JavaScript, Bootstrap 5, Webpack |
+| API | PostgREST |
+| Database | PostgreSQL |
+| Data ingestion | Node.js, CSV Parser, node-postgres |
+| Tooling | Postman, DBeaver |
 
-| Category | Technology |
-| :--- | :--- |
-| **Frontend** | JavaScript (ESM), Bootstrap 5, Lucide Icons, Webpack |
-| **Backend** | PostgREST, Nginx |
-| **Database** | PostgreSQL |
-| **Infrastructure** | Docker, Docker Compose, Traefik (Reverse Proxy) |
-| **Development Tools** | Node.js, npm, Postman, DBeaver |
+## Data model
 
------
+The application works with four primary entities:
 
-## 🚀 Getting Started / Project Execution
+- **Customers:** account holder information.
+- **Platforms:** payment channels such as digital wallets or banks.
+- **Invoices:** amounts due, due dates, and payment status.
+- **Transactions:** payment references linked to invoices and platforms.
 
-Follow these instructions to get the project running locally for development or deployed on a server.
+Foreign keys and normalized tables reduce duplication and protect relational integrity.
 
-### Prerequisites
+## Operational queries
 
-  * Node.js & npm
-  * Docker & Docker Compose
-  * A code editor (e.g., VS Code)
-  * A database client (e.g., DBeaver)
-  * A REST client (e.g., Postman)
+The API supports reporting use cases such as:
 
-### Local Frontend Development
+- Total payments grouped by customer.
+- Pending and partially paid invoices with customer details.
+- Transactions filtered by payment platform.
+- Invoice and transaction data prepared for reconciliation workflows.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-repository-url>
-    ```
-2.  **Navigate to the project directory:**
-    ```bash
-    cd Crud_Database
-    ```
-3.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-4.  **Configure the API URL:**
-    Open `src/utils/getData.js` and set the `API_URL` constant to your deployed API endpoint (e.g., `https://api-financiera.ingeniot.com.co`).
-5.  **Start the development server:**
-    ```bash
-    npm start
-    ```
-    This will open the application on `http://localhost:8080`.
+## Run the dashboard
 
-### Server-side Deployment (Docker)
+```bash
+git clone https://github.com/LuisDa87/financiera.git
+cd financiera
+npm install
+npm start
+```
 
-1.  **Prepare the Server:**
-      * Ensure your server has Docker, Docker Compose, and Traefik running.
-      * Configure your DNS records (`A` records for `crud-financiero.ingeniot.com.co` and `api-financiera.ingeniot.com.co`) to point to your server's IP address.
-      * Create the project directory on the server (e.g., `/home/ingeadmin/crud-app`).
-2.  **Upload Configuration Files:**
-      * Upload `docker-compose.yml`, `.env`, the `database` folder, and the `nginx-conf` folder to your project directory on the server.
-3.  **Build and Upload Frontend:**
-      * Run `npm run build` locally to generate the `/dist` folder.
-      * Use `scp` to upload the contents of the `/dist` folder to the `/dist` folder on the server.
-        ```bash
-        scp -r ./dist/* your_user@your_server_ip:/path/to/crud-app/dist/
-        ```
-4.  **Launch the Application:**
-      * SSH into your server, navigate to the project directory, and run:
-        ```bash
-        docker compose up -d
-        ```
+The Webpack development server opens the dashboard at `http://localhost:8080`.
 
------
+Configure the PostgREST base URL in `src/utils/getData.js` for your local environment.
 
-## 🗃️ Database Normalization
+## Import synthetic data
 
-The database was designed following normalization principles to ensure data integrity and efficiency.
+Set a local PostgreSQL connection string before running the importer:
 
-### Relational Model
+```bash
+export DATABASE_URL='postgresql://user:password@localhost:5432/financial_operations'
+node importer.js
+```
 
-The schema consists of four main tables, normalized to the Third Normal Form (3NF).
+Use `.env.example` as a safe configuration reference. Never commit production credentials.
 
-### Normalization Explained
+## Security notice
 
-Normalization was applied to:
+The CSV files in this repository contain synthetic demonstration data. Development credentials and infrastructure addresses must be supplied through environment variables and must not be committed to source control.
 
-  * **Eliminate Data Redundancy:** Information for entities like customers and platforms is stored only once. For example, a customer's name is not repeated for every invoice they have.
-  * **Prevent Data Anomalies:** Separating data into distinct tables prevents issues. For instance, you can't delete a customer's only transaction and accidentally lose their contact information. You can also add a new customer before they have any invoices.
-  * **Ensure Data Integrity:** Foreign key constraints are used to guarantee that relationships are valid (e.g., an invoice cannot be created for a customer that does not exist).
+## Portfolio relevance
 
------
+This project demonstrates database normalization, transaction tracking, operational reconciliation concepts, API consumption, bulk ingestion, and frontend integration—skills applicable to fintech and automation roles.
 
-## 🚚 Bulk Data Loading from CSV
+## Author
 
-The project includes a Node.js script to perform a bulk data import from CSV files into the PostgreSQL database.
-
-**Instructions:**
-
-1.  Place your data files (`customers.csv`, `platforms.csv`, `invoices.csv`, `transactions.csv`) inside the `/database` folder in the project root.
-2.  Ensure the column headers in each CSV file exactly match the column names in the database tables.
-3.  Install the required dependencies:
-    ```bash
-    npm install pg csv-parser
-    ```
-4.  Configure the database connection details in the `importer.js` file.
-5.  Execute the script from your local machine's terminal:
-    ```bash
-    node importer.js
-    ```
-
------
-
-##  Advanced API Queries
-
-Custom, complex query endpoints were created without writing additional backend code by leveraging PostgREST's features. These can be tested using the provided Postman collection.
-
-### 1\. Total Paid per Customer
-
-  * **Requirement:** Get the sum of all payments grouped by each customer.
-  * **Implementation:** A PostgreSQL `VIEW` named `customer_payment_totals` was created. PostgREST automatically exposes this view as an API endpoint.
-  * **Endpoint:** `GET /customer_payment_totals`
-
-### 2\. Pending Invoices with Details
-
-  * **Requirement:** List all invoices that are not fully paid, including the customer's name and any associated transactions.
-  * **Implementation:** Uses PostgREST's URL parameters for filtering and embedding related data.
-  * **Endpoint:** `GET /invoices?select=invoice_number,status,amount_due,customer:customers(full_name),transactions(*)&status=in.(pending,partially_paid)`
-
-### 3\. Transactions by Platform
-
-  * **Requirement:** List all transactions from a specific platform (e.g., "Nequi"), including invoice and customer details.
-  * **Implementation:** Uses PostgREST's URL parameters to filter based on a value in a related table.
-  * **Endpoint:** `GET /transactions?select=*,invoice:invoices(invoice_number,customer:customers(full_name)),platform:platforms(name)&platforms.name=eq.Nequi`
-
------
-
-## 👨‍💻 Developer Info
-
-  * **Name:** Luis David
-  * **Clan:** *Van Rossum*
+**Luis David Ducuara Cadavid**  
+Backend & Automation Developer · Mechatronics Engineering Student  
+[GitHub](https://github.com/LuisDa87) · [LinkedIn](https://www.linkedin.com/in/luisdavidd/)

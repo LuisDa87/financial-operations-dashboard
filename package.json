@@ -1,18 +1,20 @@
 {
-  "name": "crud_database",
+  "name": "financial-operations-dashboard",
   "version": "1.0.0",
-  "description": "Panel de administración para la base de datos financiera de ExpertSoft.",
-  "type": "module", 
+  "description": "Financial operations dashboard for invoices, transactions, reconciliation workflows, and PostgreSQL data management.",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production"
   },
   "keywords": [
-    "crud",
-    "bootstrap",
+    "financial-operations",
+    "postgresql",
+    "postgrest",
     "javascript",
-    "spa"
+    "data-import",
+    "reconciliation"
   ],
   "author": "Luis David Ducuara",
   "license": "MIT",
